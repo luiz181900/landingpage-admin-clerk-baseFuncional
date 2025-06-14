@@ -18,7 +18,6 @@ import {
 } from "lucide-react"
 import VSLPlayer from "@/components/vsl-player"
 import RootLayoutClient from "./RootLayoutClient"
-import ThemeSelector from "@/components/theme-selector"
 
 export default function LandingPage() {
   const [isAccordionOpen, setIsAccordionOpen] = useState<number | null>(null)
@@ -145,11 +144,6 @@ export default function LandingPage() {
                   <span className="text-xs block text-gray-400">Seg</span>
                 </div>
               </div>
-            </div>
-
-            {/* Seletor de Temas */}
-            <div className="absolute top-4 right-4">
-              <ThemeSelector />
             </div>
           </div>
         </header>
