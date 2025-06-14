@@ -1,0 +1,77 @@
+// Prisma Schema configurado para Supabase (PostgreSQL)
+// Documentação: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // Para Supabase connection pooling
+}
+
+// Modelo para configurações globais do site
+model SiteConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique // ex: "active_theme", "site_title", etc.
+  value     String   // valor da configuração
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("site_configs")
+}
+
+// Modelo para temas personalizados (futuro)
+model CustomTheme {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  label       String
+  description String?
+  colors      Json     // JSON com todas as cores do tema
+  isActive    Boolean  @default(false) @map("is_active")
+  createdBy   String   @map("created_by") // ID do usuário que criou
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("custom_themes")
+}
+
+// Modelo para logs de auditoria
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id") // ID do usuário que fez a ação
+  action    String   // ex: "theme_changed", "config_updated"
+  details   Json?    // detalhes da ação em JSON
+  ipAddress String?  @map("ip_address") // IP do usuário
+  userAgent String?  @map("user_agent") // User agent do navegador
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}
+
+// Modelo para estatísticas de uso
+model UsageStats {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  metric    String   // ex: "page_views", "theme_changes"
+  value     Int      // valor da métrica
+  metadata  Json?    // dados adicionais
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([date, metric])
+  @@map("usage_stats")
+}
+
+// Modelo para configurações de usuário (futuro)
+model UserPreferences {
+  id               String   @id @default(cuid())
+  userId           String   @unique @map("user_id") // ID do usuário do Clerk
+  preferredTheme   String?  @map("preferred_theme") // tema preferido do usuário
+  emailNotifications Boolean @default(true) @map("email_notifications")
+  lastLoginAt      DateTime? @map("last_login_at")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
+}
